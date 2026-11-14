@@ -1,3 +1,4 @@
+import {picFor,preloadPic} from './pics.js';
 /* ============ COURSE CONTENT ============ */
 /* item: [Czech, katakana reading, Japanese meaning, note] — phrases use the feminine form where speaker gender matters */
 const CH = [
@@ -252,6 +253,11 @@ const ART={
 };
 const stripP=s=>s.toLowerCase().replace(/[?!.,…:;"„“()]/g,'');
 const KEYW=new Set(ALL.filter(w=>!/\s/.test(w.cz.trim())).map(w=>stripP(w.cz)).filter(Boolean));
+/* word picture (black ink on white), shown only after the answer is revealed */
+function wordPic(w,cls=''){
+  const src=picFor(w.cz);
+  return src?`<span class="wpic ${cls}"><img src="${src}" alt="${esc(w.ja)}" decoding="async" width="512" height="512"></span>`:'';
+}
 const artImg=(k,cls='figure',style='')=>`<img class="${cls}" src="${ART_DIR+ART[k].src}" alt="" decoding="async" ${style?`style="${style}"`:''}>`;
 /* character cut into a side of a scene panel; zoom = image width relative to its column */
 function Figure(k,{side='right',zoom=1.7,top=-2,cls='',lines=false}={}){
@@ -544,12 +550,13 @@ function sessionHTML(){
   const title=sess.review?'今日の復習':`${ROMAN[sess.ch]} · ${esc(CH[sess.ch].cz)}`;
   const top=`<div class="sess-top"><button class="btn ghost" data-exit>✕ やめる</button>${pipsHTML()}<span class="num" style="color:var(--muted);font-size:13px;font-weight:700">${sess.i+1}/${sess.qs.length}</span></div><span class="sr-only">${title}</span>`;
   const okNow=sess.answered&&sess.res[sess.i]==='ok'?' ok':'';
+  preloadPic(w.cz);if(sess.qs[sess.i+1])preloadPic(sess.qs[sess.i+1].w.cz);
   if(sess.kind==='cards'){
     return `<div class="sess">${top}
       <button class="flip ${sess.flipped?'on':''}" id="flip" aria-label="カードをめくる">
         <div class="flip-in">
           <div class="face">${SpeechBubble(w.cz,{cls:'big'})}${kanaHTML(w)}<div class="hint">タップしてめくる（スペースキー）</div></div>
-          <div class="face back"><div class="ja">${esc(w.ja)}</div><div class="cz" lang="cs">${esc(w.cz)}</div>${w.note?`<div class="nt">${esc(w.note)}</div>`:''}</div>
+          <div class="face back">${wordPic(w,'card-pic')}<div class="ja">${esc(w.ja)}</div><div class="cz" lang="cs">${esc(w.cz)}</div>${w.note?`<div class="nt">${esc(w.note)}</div>`:''}</div>
         </div>
       </button>
       <div class="row">${sayBtn(w.cz)}</div>
@@ -579,9 +586,10 @@ function sessionHTML(){
 function feedbackHTML(r,w){
   const msg={ok:'正解！ Správně!',bad:'残念…正解は',near:'ほぼ正解！記号（ˇ ´ ˚）に注意'}[r];
   const answer=`<span class="ans" lang="cs">${esc(w.cz)}</span>`;
+  const pic=wordPic(w,'fb-pic');
   const said=r==='ok'
-    ?`${SpikyBubble('Výborně!')}<div class="ans-box"><b>${msg}</b> ${answer} <span class="kana">${esc(w.kana)}</span>${sess.kind==='type'?`<div style="font-size:13px">${esc(w.ja)}</div>`:''}</div>`
-    :`${ThoughtBubble(`${msg}${answer}<span class="kana">${esc(w.kana)} · ${esc(w.ja)}</span>`)}`;
+    ?`${SpikyBubble('Výborně!')}<div class="ans-line">${pic}<div class="ans-box"><b>${msg}</b> ${answer} <span class="kana">${esc(w.kana)}</span>${sess.kind==='type'?`<div style="font-size:13px">${esc(w.ja)}</div>`:''}</div></div>`
+    :`${ThoughtBubble(`<span class="ans-line">${pic}<span>${msg}${answer}<span class="kana">${esc(w.kana)} · ${esc(w.ja)}</span></span></span>`)}`;
   return MangaPanel(`${CharacterReaction(r)}<div class="fb-body">${said}
     <div class="row">${sayBtn(w.cz)}<button class="btn primary" data-next>次へ</button></div></div>`,{cls:'art fb '+r,tag:'div',attrs:'role="status"'});
 }
