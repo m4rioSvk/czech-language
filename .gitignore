@@ -1,5 +1,11 @@
-﻿manga-assets.zip
-_backup/
-.env*
 node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
 
+# local-only files
+_backup/
+manga-assets.zip
+.firebase/

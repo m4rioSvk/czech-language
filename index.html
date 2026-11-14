@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Orloj Czech</title>
+<meta name="description" content="日本語話者のためのチェコ語学習ダッシュボード">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23fff' stroke='%23111' stroke-width='3'/%3E%3Cpath d='M16 16V7M16 16l6 4' stroke='%23D7192A' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans:wght@400;500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+</head>
+<body class="signed-out">
+<header class="top">
+  <div class="wrap top-row">
+    <button class="icon-btn" id="setBtn" aria-label="設定" title="設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button>
+    <button class="brand" id="homeBtn" aria-label="ホームへ">ORLOJ <em>ČESKY</em></button>
+    <div class="top-end">
+      <div class="sync" id="sync" data-s="cloud"><i></i><span>クラウドに保存済み</span></div>
+      <button class="avatar-btn" id="userBtn" aria-haspopup="true" aria-expanded="false" aria-controls="userMenu" aria-label="アカウント"><img class="avatar" id="userPhoto" alt="" referrerpolicy="no-referrer"><span id="userInitial" aria-hidden="true"></span></button>
+      <div class="user-menu" id="userMenu" hidden>
+        <b id="userName"></b>
+        <span id="userEmail"></span>
+        <button class="btn ghost" data-signout>Odhlásit se <small>ログアウト</small></button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap top-sub" id="topSub"></div>
+</header>
+<div class="wrap"><main id="app" aria-live="polite"></main></div>
+<nav class="bnav" aria-label="メインメニュー">
+  <button data-nav="home" title="ホーム"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7v9h-6v-6h-5v6h-6z"/></svg>Domů</button>
+  <button data-nav="words" title="単語"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 4.5h6.5a2.5 2.5 0 0 1 2.5 2.5v13a2 2 0 0 0-2-2H4zM20 4.5h-4.5A2.5 2.5 0 0 0 13 7v13a2 2 0 0 1 2-2h5z"/></svg>Slovíčka</button>
+  <button data-nav="talk" title="練習"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M4 5h11v8H9l-3.5 3v-3H4zM15 9h5v8h-1.5v3L15 17h-4v-4"/></svg>Konverzace</button>
+  <button data-nav="progress" title="進み具合"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c.8-4 3.8-6 7.5-6s6.7 2 7.5 6z"/></svg>Pokrok</button>
+</nav>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
