@@ -143,6 +143,20 @@ export const PICS = {
   "pokladna": 'pokladna.webp',
   "Ještě něco?": 'jeste-neco.webp',
   "To je všechno": 'to-je-vsechno.webp',
+  "čas": 'cas.webp',
+  "škola": 'skola.webp',
+  "žena": 'zena.webp',
+  "řeka": 'reka.webp',
+  "chata": 'chata.webp',
+  "dobrý": 'dobry.webp',
+  "práce": 'prace.webp',
+  "dům": 'dum.webp',
+  "tělo": 'telo.webp',
+  "vlak": 'vlak.webp',
+  "cena": 'cena.webp',
+  "jaro": 'jaro.webp',
+  "hrad": 'hrad.webp',
+  "kůň": 'kun.webp',
 };
 
 const DIR = import.meta.env.BASE_URL + 'manga/words/';
