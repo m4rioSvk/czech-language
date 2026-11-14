@@ -541,7 +541,17 @@ function startSession(kind,chN){
 function autoSpeakPrompt(){
   if(!sess||!S.settings.autoplay||sess.i>=sess.qs.length)return;
   const q=sess.qs[sess.i];
-  if(sess.kind==='cards'||(sess.kind==='quiz'&&q.dir==='cz2ja'))speak(q.w.cz);
+  // picture cards stay silent until flipped, otherwise the audio gives the answer away
+  if((sess.kind==='cards'&&!picFor(q.w.cz))||(sess.kind==='quiz'&&q.dir==='cz2ja'))speak(q.w.cz);
+}
+function flipCard(){
+  sess.flipped=!sess.flipped;
+  $('#flip').classList.toggle('on',sess.flipped);
+  const w=sess.qs[sess.i].w;
+  if(picFor(w.cz)){
+    $('.say-row')?.classList.toggle('hide',!sess.flipped);
+    if(sess.flipped&&S.settings.autoplay)speak(w.cz);
+  }
 }
 function pipsHTML(){return `<div class="pips">${sess.qs.map((q,i)=>`<i class="${sess.res[i]||(i===sess.i?'cur':'')}"></i>`).join('')}</div>`}
 function sessionHTML(){
@@ -552,14 +562,21 @@ function sessionHTML(){
   const okNow=sess.answered&&sess.res[sess.i]==='ok'?' ok':'';
   preloadPic(w.cz);if(sess.qs[sess.i+1])preloadPic(sess.qs[sess.i+1].w.cz);
   if(sess.kind==='cards'){
+    const hint='<div class="hint">タップしてめくる（スペースキー）</div>';
+    const note=w.note?`<div class="nt">${esc(w.note)}</div>`:'';
+    // picture card: recall the Czech word from the picture, the back reveals it
+    const faces=picFor(w.cz)
+      ?`<div class="face pic-front">${wordPic(w,'card-pic')}<div class="q">チェコ語で何と言う？</div>${hint}</div>
+          <div class="face back"><div class="cz-big" lang="cs">${esc(w.cz)}</div>${S.settings.kana?`<div class="kana">${esc(w.kana)}</div>`:''}<div class="ja-small">${esc(w.ja)}</div>${note}</div>`
+      :`<div class="face">${SpeechBubble(w.cz,{cls:'big'})}${kanaHTML(w)}${hint}</div>
+          <div class="face back"><div class="ja">${esc(w.ja)}</div><div class="cz" lang="cs">${esc(w.cz)}</div>${note}</div>`;
     return `<div class="sess">${top}
       <button class="flip ${sess.flipped?'on':''}" id="flip" aria-label="カードをめくる">
         <div class="flip-in">
-          <div class="face">${SpeechBubble(w.cz,{cls:'big'})}${kanaHTML(w)}<div class="hint">タップしてめくる（スペースキー）</div></div>
-          <div class="face back">${wordPic(w,'card-pic')}<div class="ja">${esc(w.ja)}</div><div class="cz" lang="cs">${esc(w.cz)}</div>${w.note?`<div class="nt">${esc(w.note)}</div>`:''}</div>
+          ${faces}
         </div>
       </button>
-      <div class="row">${sayBtn(w.cz)}</div>
+      <div class="row say-row ${picFor(w.cz)&&!sess.flipped?'hide':''}">${sayBtn(w.cz)}</div>
       <div class="row"><button class="btn" data-card="again">← もう一度</button><button class="btn primary" data-card="know">覚えた</button></div>
     </div>`;
   }
@@ -718,7 +735,7 @@ document.addEventListener('click',e=>{
   if(d.review!==undefined){startSession('review',null);return}
   if(d.start){startSession(d.start,+d.ch);return}
   if(d.exit!==undefined){sess.review?go({name:'home'}):go({name:'chapter',ch:sess.ch});return}
-  if(t.id==='flip'){sess.flipped=!sess.flipped;t.classList.toggle('on',sess.flipped);return}
+  if(t.id==='flip'){flipCard();return}
   if(d.card){cardAnswer(d.card==='know');return}
   if(d.opt!==undefined){answerQuiz(+d.opt);return}
   if(d.next!==undefined){nextQ();return}
@@ -746,7 +763,7 @@ document.addEventListener('keydown',e=>{
     if(!sess.answered&&/^[1-4]$/.test(e.key)){answerQuiz(+e.key-1);return}
     if(sess.answered&&e.key==='Enter'){e.preventDefault();nextQ();return}
   }else if(sess.kind==='cards'&&!inInput){
-    if(e.key===' '){e.preventDefault();sess.flipped=!sess.flipped;$('#flip').classList.toggle('on',sess.flipped)}
+    if(e.key===' '){e.preventDefault();flipCard()}
     else if(e.key==='ArrowRight')cardAnswer(true);
     else if(e.key==='ArrowLeft')cardAnswer(false);
   }else if(sess.kind==='type'&&sess.answered&&e.key==='Enter'){e.preventDefault();nextQ()}
